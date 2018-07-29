@@ -15,51 +15,51 @@ image_metadata_schema = TasteTestSchemata.ImageMetadataSchema()
 
 TasteTest = Blueprint('TasteTest', __name__)
 
-##def _connect_mongo():
-##    """ A util for making a connection to mongo """
-##
-##    DB_NAME = str(os.environ.get('TASTE_DB_NAME'))
-##    DB_HOST = str(os.environ.get('TASTE_DB_HOST'))
-##    DB_PORT = int(os.environ.get('TASTE_DB_PORT'))
-##    DB_USER = str(os.environ.get('TASTE_DB_USER'))
-##    DB_PASS = str(os.environ.get('TASTE_DB_PASS'))
-##    
-##    connection = MongoClient(DB_HOST, DB_PORT)
-##    db = connection[DB_NAME]
-##    db.authenticate(DB_USER, DB_PASS)
-##
-##    return db
-##
-##def getImageData():
-##
-##    db = _connect_mongo()
-##
-##    col_names = [u'Name', u'PinterestUrl', u'StructuralEmphasis', u'Slenderness', u'Symmetry', u'Repetition', u'Complexity', u'Sequence', u'PinterestSection']
-##    df  = pd.DataFrame(columns = col_names)
-##
-##    metadata = db.image_data.find()
-##    for image in metadata:
-##        if image[u'Repetition'] != u'"Repetition"':
-##            del image[u'_id']
-##            del image[u'Id']
-##            for val in image:
-##                image[val] = image[val].replace('"', '')
-##            df.loc[len(df)] = image 
-##
-##    with pd.option_context('display.max_rows', 20, 'display.max_columns', 9):
-##        print(df)
-##    
-##    return df
+def _connect_mongo():
+    """ A util for making a connection to mongo """
+
+    DB_NAME = str(os.environ.get('TASTE_DB_NAME'))
+    DB_HOST = str(os.environ.get('TASTE_DB_HOST'))
+    DB_PORT = int(os.environ.get('TASTE_DB_PORT'))
+    DB_USER = str(os.environ.get('TASTE_DB_USER'))
+    DB_PASS = str(os.environ.get('TASTE_DB_PASS'))
+    
+    connection = MongoClient(DB_HOST, DB_PORT)
+    db = connection[DB_NAME]
+    db.authenticate(DB_USER, DB_PASS)
+
+    return db
 
 def getImageData():
-    
-    results = pd.read_csv(os.path.join(os.getcwd(),'API','Taste','taste_test_images.csv'), sep=";")
-    del results['Id']
+
+    db = _connect_mongo()
+
+    col_names = [u'Name', u'PinterestUrl', u'StructuralEmphasis', u'Slenderness', u'Symmetry', u'Repetition', u'Complexity', u'Sequence', u'PinterestSection']
+    df  = pd.DataFrame(columns = col_names)
+
+    metadata = db.image_data.find()
+    for image in metadata:
+        if image[u'Repetition'] != u'"Repetition"':
+            del image[u'_id']
+            del image[u'Id']
+            for val in image:
+                image[val] = image[val].replace('"', '')
+            df.loc[len(df)] = image 
 
     with pd.option_context('display.max_rows', 20, 'display.max_columns', 9):
-        print(results)
+        print(df)
     
-    return results
+    return df
+
+##def getImageData():
+##    
+##    results = pd.read_csv(os.path.join(os.getcwd(),'API','Taste','taste_test_images.csv'), sep=";")
+##    del results['Id']
+##
+##    with pd.option_context('display.max_rows', 20, 'display.max_columns', 9):
+##        print(results)
+##    
+##    return results
 
 def generate_input_dict(lst, feat, intfeats_to_feat):
     imgs = lst[feat].copy()
