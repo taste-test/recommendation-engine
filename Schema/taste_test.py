@@ -57,8 +57,7 @@ class TasteProfileSchema(Schema):
 # Define class for the mongo object
 class ImageMetadata(object):
 
-    def __init__(self, Id, Name, PinterestUrl, StructuralEmphasis, Slenderness, Symmetry, Repetition, Complexity, Sequence, PinterestSection):
-        self.Id = Id
+    def __init__(self, Name, PinterestUrl, StructuralEmphasis, Slenderness, Symmetry, Repetition, Complexity, Sequence, PinterestSection):
         self.Name = Name
         self.PinterestUrl = PinterestUrl
         self.StructuralEmphasis = StructuralEmphasis
@@ -70,7 +69,6 @@ class ImageMetadata(object):
         self.PinterestSection = PinterestSection
 
 class ImageMetadataSchema(Schema):
-    Id = fields.Int()
     Name = fields.String()
     PinterestUrl = fields.String()
     StructuralEmphasis = fields.String()
@@ -83,4 +81,4 @@ class ImageMetadataSchema(Schema):
 
     @post_load
     def make_image_metadata(self, data):
-        return ImageMetadata(data['Id'], data['Name'], data['PinterestUrl'], data['StructuralEmphasis'], data['Slenderness'], data['Symmetry'], data['Repetition'], data['Complexity'], data['Sequence'], data['PinterestSection'])
+        return ImageMetadata(data['Name'], data['PinterestUrl'], data['StructuralEmphasis'], data['Slenderness'], data['Symmetry'], data['Repetition'], data['Complexity'], data['Sequence'], data['PinterestSection'])

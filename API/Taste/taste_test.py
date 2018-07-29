@@ -30,36 +30,12 @@ def _connect_mongo():
 
     return db
 
-##def getImageData():
-##
-##    db = _connect_mongo()
-##
-##    col_names = [u'Name', u'PinterestUrl', u'StructuralEmphasis', u'Slenderness', u'Symmetry', u'Repetition', u'Complexity', u'Sequence', u'PinterestSection']
-##    df  = pd.DataFrame(columns = col_names)
-##
-##    metadata = db.image_data.find()
-##    for image in metadata:
-##        if image[u'Repetition'] != u'"Repetition"':
-##            del image[u'_id']
-##            del image[u'Id']
-##            for val in image:
-##                image[val] = image[val].replace('"', '')
-##            df.loc[len(df)] = image 
-##
-##    with pd.option_context('display.max_rows', 20, 'display.max_columns', 9):
-##        print(df)
-##    
-##    return df
-
 def getImageData():
-    
-    results = pd.read_csv(os.path.join(os.getcwd(),'API','Taste','taste_test_images.csv'), sep=";")
-    del results['Id']
 
-    with pd.option_context('display.max_rows', 20, 'display.max_columns', 9):
-        print(results)
+    db = _connect_mongo()
+    df= pd.DataFrame(list(db.image_data.find()))
     
-    return results
+    return df
 
 def generate_input_dict(lst, feat, intfeats_to_feat):
     imgs = lst[feat].copy()
