@@ -1,9 +1,6 @@
 # [START app]
 import os
 from flask import Flask, jsonify, request, Blueprint
-import json
-import time
-import base64
 
 from API.Taste.taste_test import TasteTest
 

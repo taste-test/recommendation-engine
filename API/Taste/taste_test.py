@@ -1,29 +1,55 @@
 from flask import Flask, jsonify, request, Blueprint
 import numpy as np
-import json
 import os, sys, math
-import time
 sys.path.insert(0, os.path.abspath(".."))
 import pandas as pd
-from pandas.io import sql
-import mysql.connector
-from mysql.connector import Error
 from random import random, randint
-import uuid
 from collections import defaultdict
+from pymongo import MongoClient
 
 import Schema.taste_test as TasteTestSchemata
 
 imagecomparisonlist_schema = TasteTestSchemata.ImageComparisonListSchema()
 tasteprofile_schema = TasteTestSchemata.TasteProfileSchema()
+image_metadata_schema = TasteTestSchemata.ImageMetadataSchema()
 
 TasteTest = Blueprint('TasteTest', __name__)
 
+def _connect_mongo():
+    """ A util for making a connection to mongo """
+
+    DB_NAME = str(os.environ.get('TASTE_DB_NAME'))
+    DB_HOST = str(os.environ.get('TASTE_DB_HOST'))
+    DB_PORT = int(os.environ.get('TASTE_DB_PORT'))
+    DB_USER = str(os.environ.get('TASTE_DB_USER'))
+    DB_PASS = str(os.environ.get('TASTE_DB_PASS'))
+    
+    connection = MongoClient(DB_HOST, DB_PORT)
+    db = connection[DB_NAME]
+    db.authenticate(DB_USER, DB_PASS)
+
+    return db
+
 def getImageData():
-    conn = mysql.connector.connect(host='35.188.233.13', database='bookshelf', user='tempUser', password='tempPwd123!')
-    query = "SELECT * FROM bookshelf.images;"
-    results = pd.read_sql(query, con=conn)
-    return results
+
+    db = _connect_mongo()
+
+    col_names = [u'Name', u'PinterestUrl', u'StructuralEmphasis', u'Slenderness', u'Symmetry', u'Repetition', u'Complexity', u'Sequence', u'PinterestSection']
+    df  = pd.DataFrame(columns = col_names)
+
+    metadata = db.image_data.find()
+    for image in metadata:
+        if image[u'Repetition'] != u'"Repetition"':
+            del image[u'_id']
+            del image[u'Id']
+            for val in image:
+                image[val] = image[val].replace('"', '')
+            df.loc[len(df)] = image 
+
+    with pd.option_context('display.max_rows', 20, 'display.max_columns', 9):
+        print(df)
+    
+    return df
 
 def generate_input_dict(lst, feat, intfeats_to_feat):
     imgs = lst[feat].copy()
