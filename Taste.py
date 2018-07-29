@@ -28,7 +28,7 @@ def git_status():
         branch = os.popen("git rev-parse --abbrev-ref HEAD").read()
         gitDict["Branch"] = branch.rstrip("\n")
     except:
-        print "Something went wrong with the command."
+        print("Something went wrong with the command.")
 
     try:
         log = os.popen("git log --pretty=format:\"%H,%h,%T,%t,%P,%p,%an,%ae,%ad,%ar,%cn,%ce,%cd,%cr,%s\" -1").read()
@@ -50,7 +50,7 @@ def git_status():
         gitDict["Commit"]["Committer date, relative"] = log.split(",")[13]
         gitDict["Commit"]["Subject"] = log.split(",")[14].split("\n")[0]
     except:
-        print "Something went wrong with the command."
+        print("Something went wrong with the command.")
 
     return jsonify(gitDict)
 
