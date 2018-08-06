@@ -30,11 +30,17 @@ def _connect_mongo():
 
     return db
 
+##def getImageData():
+##
+##    db = _connect_mongo()
+##    df= pd.DataFrame(list(db.image_data.find()))
+##    
+##    return df
+
 def getImageData():
 
-    db = _connect_mongo()
-    df= pd.DataFrame(list(db.image_data.find()))
-    
+    df = pd.read_csv(os.path.join(os.getcwd(),"dbMigration","new_taste_test_images.csv"))
+
     return df
 
 def generate_input_dict(lst, feat, intfeats_to_feat):
