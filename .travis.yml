@@ -7,9 +7,3 @@ install:
 # command to run tests
 script:
   - py.test
-env:
-  - FLASK_APP=Taste.py
-  - TASTE_DB_PORT=5000
-  - TASTE_DB_NAME=taste-test
-  - TASTE_DB_HOST=ds143511.mlab.com
-  - TASTE_DB_PORT=43511
